@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModusOperandi.CSharp", "ModusOperandi.CSharp.csproj", "{CAB031B4-DEBF-98EC-E435-58959610966B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAB031B4-DEBF-98EC-E435-58959610966B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB031B4-DEBF-98EC-E435-58959610966B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB031B4-DEBF-98EC-E435-58959610966B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB031B4-DEBF-98EC-E435-58959610966B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
