@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Speech.Recognition;
 using UnityEngine;
 
@@ -21,9 +22,10 @@ public class VoiceRecognizer {
 		gb.Append(colors);
 		
 		Grammar g = new Grammar(gb);
-		//recognizer.LoadGrammar(g);
-		recognizer.LoadGrammar(new DictationGrammar()); // THIS LINE CRASHES UNITY :( put it in a separate thread?
 		
+		recognizer.LoadGrammarAsync(g);
+		//recognizer.LoadGrammarAsync(new DictationGrammar()); // THIS LINE CRASHES UNITY :( put it in a separate thread?
+
 		recognizer.SpeechRecognized +=
 		  new EventHandler<SpeechRecognizedEventArgs>(sre_SpeechRecognized);
 	}
