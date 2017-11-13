@@ -4,16 +4,15 @@ using System.IO;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
-
-	//VoiceRecognizer recognizer;
+	
 	const string EXE_PATH = "Assets\\SpeechRecognitionEngine.exe";
 	const string SPEECH_PATH = "speech.txt";
 	string[] empty = { };
+	Process speechProcess;
 
 	void Start ()
 	{
-		//recognizer = new VoiceRecognizer();
-		Process.Start(EXE_PATH);
+		speechProcess = Process.Start(EXE_PATH);
 		StartCoroutine("Listen");
 	}
 
@@ -46,13 +45,11 @@ public class GameManager : MonoBehaviour {
 
 	void Update ()
 	{
-		/*if (Input.GetKeyDown(KeyCode.Space))
-		{
-			recognizer.StartListening();
-		}
-		if (Input.GetKeyUp(KeyCode.Space))
-		{
-			recognizer.StopListening();
-		}*/
+		
     }
+
+	void OnApplicationQuit()
+	{
+		speechProcess.Close();
+	}
 }
