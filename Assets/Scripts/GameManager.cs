@@ -50,6 +50,6 @@ public class GameManager : MonoBehaviour {
 
 	void OnApplicationQuit()
 	{
-		speechProcess.Close();
+		speechProcess.Kill();
 	}
 }
