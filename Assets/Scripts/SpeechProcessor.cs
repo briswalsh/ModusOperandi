@@ -1,13 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(AudioSource))]
 public class SpeechProcessor : MonoBehaviour {
 
+	private Dictionary<string, AudioClip> audioDictionary; 
+	private AudioSource audio;
+
+	void Awake(){
+		audioDictionary = new Dictionary<string, AudioClip> ();
+		audio = GetComponent<AudioSource>();
+		audio.enabled = true;
+
+		AudioClip errorClip = Resources.Load ("didnt_catch_that", typeof(AudioClip)) as AudioClip;
+
+		audioDictionary.Add("error", errorClip);
+
+		audioDictionary.Add("who", Resources.Load("alex_russell_info", typeof(AudioClip)) as AudioClip);
+		audioDictionary.Add("weapon", Resources.Load("killed_with_trophy_blunt_force_trauma", typeof(AudioClip)) as AudioClip);
+		audioDictionary.Add("picture", Resources.Load("lawrenceville_community_center_pool_locker_room", typeof(AudioClip)) as AudioClip);
+		audioDictionary.Add("bag",Resources.Load("lawrenceville_community_center_pool_locker_room", typeof(AudioClip)) as AudioClip);
+		audioDictionary.Add("northriver", Resources.Load("northriver_prep_is_a_high_school", typeof(AudioClip)) as AudioClip);
+	}
+
 	public void Process(string text)
 	{
-        AudioSource audio = GetComponent<AudioSource>();
-        AudioClip reply = (AudioClip)Resources.Load("Sounds/Errors/didnt_catch_that.wav");
 		Debug.Log("Speech recognized: " + text);
         /*
 		if (text.ToLower().Contains("ball"))
@@ -16,27 +34,35 @@ public class SpeechProcessor : MonoBehaviour {
 		}
         */
 
-        if (text.ToLower().Contains("who"))
-        {
-            reply = (AudioClip) Resources.Load("Sounds/alex_russell_info.wav");
-        }
+		if(text.ToLower().Contains("who"))
+		{
+			AudioClip whoClip = audioDictionary["who"];
+			audio.PlayOneShot(whoClip);
+			return;
+		}
         if (text.ToLower().Contains("weapon"))
         {
-            reply = (AudioClip)Resources.Load("Sounds/killed_with_trophy_blunt_force_trauma.wav");
+			audio.PlayOneShot (audioDictionary["weapon"]);
+			return;
         }
         if (text.ToLower().Contains("picture"))
         {
-            reply = (AudioClip)Resources.Load("Sounds/lawrenceville_community_center_pool_locker_room.wav");
+			audio.PlayOneShot (audioDictionary["picture"]);
+			return;
         }
         if (text.ToLower().Contains("bag"))
-        {
-            reply = (AudioClip)Resources.Load("Sounds/nothing_in_the_bag.wav");
-        }
+		{
+			audio.PlayOneShot (audioDictionary["bag"]);
+			return;
+		}
         if (text.ToLower().Contains("northriver"))
         {
-            reply = (AudioClip)Resources.Load("Sounds/northriver_prep_is_a_high_school.wav");
+			audio.PlayOneShot(audioDictionary["northriver"]);
+			return;
         }
 
-        audio.PlayOneShot(reply);
+		audio.PlayOneShot (audioDictionary["error"]);
+
+
     }
 }
