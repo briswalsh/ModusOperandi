@@ -4,7 +4,8 @@ using System.IO;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
-	
+    public GameObject AudioManager;
+
 	const string EXE_PATH = "Assets\\SpeechRecognitionEngine.exe";
 	const string SPEECH_PATH = "speech.txt";
 	string[] empty = { };
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour {
 				string[] speech = File.ReadAllLines(SPEECH_PATH);
 				if (!IsEmpty(speech))
 				{
-					SpeechProcessor.Process(speech[0]); //more in other lines?
+                    AudioManager.GetComponent<SpeechProcessor>().Process(speech[0]); //more in other lines?
 					File.WriteAllLines(SPEECH_PATH, empty);
 				}
 			}

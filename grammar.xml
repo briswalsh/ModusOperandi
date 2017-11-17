@@ -1,0 +1,20 @@
+<grammar version="1.0" xml:lang="en-US" mode="voice" root="question" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
+
+  <rule id="question"> 
+    <ruleref special="GARBAGE"/>
+    <ruleref uri="#clue"/> 
+    <ruleref special="GARBAGE"/>
+  </rule>
+
+  <rule id="clue">
+    <one-of>
+      <item> who </item>
+      <item> weapon </item>
+      <item> victim </item>
+      <item> picture </item>
+      <item> bag </item>
+      <item> northriver </item>
+    </one-of>
+  </rule>
+
+</grammar>
