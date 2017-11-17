@@ -20,7 +20,7 @@ public class SpeechProcessor : MonoBehaviour {
 		audioDictionary.Add("who", Resources.Load("alex_russell_info", typeof(AudioClip)) as AudioClip);
 		audioDictionary.Add("weapon", Resources.Load("killed_with_trophy_blunt_force_trauma", typeof(AudioClip)) as AudioClip);
 		audioDictionary.Add("picture", Resources.Load("lawrenceville_community_center_pool_locker_room", typeof(AudioClip)) as AudioClip);
-		audioDictionary.Add("bag",Resources.Load("lawrenceville_community_center_pool_locker_room", typeof(AudioClip)) as AudioClip);
+		audioDictionary.Add("bag",Resources.Load("nothing_in_the_bag", typeof(AudioClip)) as AudioClip);
 		audioDictionary.Add("northriver", Resources.Load("northriver_prep_is_a_high_school", typeof(AudioClip)) as AudioClip);
 	}
 
@@ -34,10 +34,9 @@ public class SpeechProcessor : MonoBehaviour {
 		}
         */
 
-		if(text.ToLower().Contains("who"))
+		if(text.ToLower().Contains("who") || text.ToLower().Contains("victim"))
 		{
-			AudioClip whoClip = audioDictionary["who"];
-			audio.PlayOneShot(whoClip);
+			audio.PlayOneShot(audioDictionary["who"]);
 			return;
 		}
         if (text.ToLower().Contains("weapon"))
@@ -60,9 +59,7 @@ public class SpeechProcessor : MonoBehaviour {
 			audio.PlayOneShot(audioDictionary["northriver"]);
 			return;
         }
-
+			
 		audio.PlayOneShot (audioDictionary["error"]);
-
-
     }
 }
