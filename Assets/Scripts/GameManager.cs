@@ -3,18 +3,22 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
-    public GameObject AudioManager;
+public class GameManager : MonoBehaviour
+{
+	public GameObject AudioManager;
 
-	const string EXE_PATH = "Assets\\SpeechRecognitionEngine.exe";
+	const string SPEECH_EXE_PATH = "Assets\\Plugins\\SpeechRecognitionEngine.exe";
+	const string MUTE_EXE_PATH = "Assets\\Plugins\\MuteApp.exe";
+	const string UNMUTE_EXE_PATH = "Assets\\Plugins\\UnmuteApp.exe";
 	const string SPEECH_PATH = "speech.txt";
 	string[] empty = { };
 	Process speechProcess;
 
-	void Start ()
+	void Start()
 	{
-		speechProcess = Process.Start(EXE_PATH);
+		speechProcess = Process.Start(SPEECH_EXE_PATH);
 		StartCoroutine("Listen");
+		Mute();
 	}
 
 	IEnumerator Listen()
@@ -26,7 +30,7 @@ public class GameManager : MonoBehaviour {
 				string[] speech = File.ReadAllLines(SPEECH_PATH);
 				if (!IsEmpty(speech))
 				{
-                    AudioManager.GetComponent<SpeechProcessor>().Process(speech[0]); //more in other lines?
+					AudioManager.GetComponent<SpeechProcessor>().Process(speech[0]);
 					File.WriteAllLines(SPEECH_PATH, empty);
 				}
 			}
@@ -44,13 +48,42 @@ public class GameManager : MonoBehaviour {
 		return true;
 	}
 
-	void Update ()
+	void Update()
 	{
-		
-    }
+		if (Input.GetKeyDown("space"))
+		{
+			Unmute();
+		}
+		if (Input.GetKeyUp("space"))
+		{
+			Mute();
+		}
+	}
 
 	void OnApplicationQuit()
 	{
 		speechProcess.Kill();
+		Unmute();
+	}
+
+	void Mute()
+	{
+		SetMute(MUTE_EXE_PATH);
+	}
+
+	void Unmute()
+	{
+		SetMute(UNMUTE_EXE_PATH);
+	}
+
+	void SetMute(string path)
+	{
+		Process p = new Process();
+		p.StartInfo.FileName = path;
+		p.StartInfo.RedirectStandardOutput = true;
+		p.StartInfo.UseShellExecute = false;
+		p.StartInfo.CreateNoWindow = true;
+		p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+		p.Start();
 	}
 }
