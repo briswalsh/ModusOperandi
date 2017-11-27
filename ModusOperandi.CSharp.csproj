@@ -75,9 +75,19 @@
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
     </Reference>
+    <Reference Include="CoreAudioApi">
+      <HintPath>Assets\Plugins\CoreAudioApi.dll</HintPath>
+    </Reference>
+    <Reference Include="MixerNativeLibrary">
+      <HintPath>Assets\Plugins\MixerNativeLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsMicrophoneMuteLibrary">
+      <HintPath>Assets\Plugins\WindowsMicrophoneMuteLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\MicScript.cs" />
     <Compile Include="Assets\Scripts\SpeechProcessor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
