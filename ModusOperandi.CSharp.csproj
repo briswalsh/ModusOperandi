@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.1.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -80,9 +82,6 @@
     </Reference>
     <Reference Include="MixerNativeLibrary">
       <HintPath>Assets\Plugins\MixerNativeLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsMicrophoneMuteLibrary">
-      <HintPath>Assets\Plugins\WindowsMicrophoneMuteLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
