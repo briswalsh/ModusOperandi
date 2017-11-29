@@ -3,7 +3,7 @@ Modus Operandi
 A VR detective game played using your voice
 
 Instructions:
-    Run the exe
+    Run the exe as administrator
     Click the microphone icon on the widget that appears at the top of the screen
 
 Credits:

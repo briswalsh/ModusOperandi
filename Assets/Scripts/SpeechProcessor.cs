@@ -5,6 +5,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 public class SpeechProcessor : MonoBehaviour {
 
+	enum State
+	{
+		DEFAULT,
+		QUESTION_SPECIFIC,
+		CLARIFY
+	}
+
 	private Dictionary<string, AudioClip> audioDictionary; 
 	private AudioSource audio;
 
