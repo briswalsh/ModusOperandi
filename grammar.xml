@@ -44,6 +44,10 @@
       
       <item> relationship </item>
       <item> roles </item>
+      
+      <item> alex </item>
+      <item> russell </item>
+      <item> jesse </item>
     </one-of>
   </rule>
 
