@@ -13,6 +13,8 @@ public class SpeechProcessor : MonoBehaviour {
 	 * found_jessenote
 	 * all TODOs
 	 * add keywords to grammar
+	 * general_school_murder_connection
+	 * alex-specific
 	 */
 
 	enum State
@@ -27,7 +29,10 @@ public class SpeechProcessor : MonoBehaviour {
 		LCC_COD,
 		LCC_WEAPON,
 		LCC_QUESTIONS,
-		ALL_QUESTIONS
+		ALL_QUESTIONS,
+		YEARBOOK,
+		SOLVED_QUESTION,
+		SOLVED_ANSWER
 	}
 
 	private Dictionary<string, AudioClip> audioDictionary; 
@@ -43,6 +48,10 @@ public class SpeechProcessor : MonoBehaviour {
 	private bool LCCwife;
 	private bool LCCwhy;
 	private int LCCquestions = 0;
+
+	private bool yearbookMedal;
+	private bool yearbookNYCC;
+	private bool yearbookSwim;
 
 	void Awake()
 	{
@@ -102,6 +111,27 @@ public class SpeechProcessor : MonoBehaviour {
 		MapResponse("fight", Struggle);
 
 		MapResponse("blood", Blood);
+
+		MapResponse("northriver", Northriver);
+
+		MapResponse("highschool", Highschool);
+
+		MapResponse("championship", Championship);
+		MapResponse("competition", Championship);
+
+		MapResponse("swim", Swim);
+		MapResponse("swimmer", Swim);
+
+		MapResponse("relationship", Relationship);
+		MapResponse("friends", Relationship);
+		MapResponse("know", Relationship);
+
+		MapResponse("who", Who);
+		MapResponse("members", Who);
+
+		MapResponse("pool", Pool);
+
+		MapResponse("en why see see", NYCC);
 
 		state = State.PICK_UP;
 	}
@@ -164,10 +194,20 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayAudio("readfile_no_confirm");
 		}
+		else if (state == State.SOLVED_QUESTION)
+		{
+			state = State.ALL_QUESTIONS;
+			PlayAudio("solved_no");
+		}
+		else if (state == State.SOLVED_ANSWER)
+		{
+			state = State.ALL_QUESTIONS;
+			PlayAudio("solved_other");
+		}
 		else
 		{
 			PlayError();
-        }
+		}
 	}
 
 	private void Confirm()
@@ -186,7 +226,7 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			state = State.GOT_IT;
 			PlayAudio("read_file_confirm");
-        }
+		}
 		else if (state == State.GOT_IT)
 		{
 			state = State.CONFIRM_LCC_PHOTO;
@@ -196,6 +236,11 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			state = State.LCC_COD;
 			PlayAudio("LCCphoto_confirm");
+		}
+		else if (state == State.SOLVED_QUESTION)
+		{
+			state = State.SOLVED_ANSWER;
+			PlayAudio("solved_yes");
 		}
 		else
 		{
@@ -250,6 +295,10 @@ public class SpeechProcessor : MonoBehaviour {
 			}
 			PlayAudio("LCC_where");
 		}
+		else if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_where");
+		}
 		else
 		{
 			PlayError();
@@ -289,6 +338,12 @@ public class SpeechProcessor : MonoBehaviour {
 		else if (state == State.ALL_QUESTIONS)
 		{
 			PlayAudio("general_medal");
+		}
+		else if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_medal");
+			yearbookMedal = true;
+			CheckSolved();
 		}
 		else
 		{
@@ -474,6 +529,12 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayAudio("general_trophy");
 		}
+		else if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_trophy");
+			yearbookMedal = true;
+			CheckSolved();
+		}
 		else
 		{
 			PlayError();
@@ -502,5 +563,138 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayError();
 		}
+	}
+
+	private void Northriver()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("yearbook_northriver");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Highschool()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			state = State.YEARBOOK;
+			PlayAudio("yearbook_highschool");
+			//TODO: unlock yearbook in scene
+        }
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Championship()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_championship");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Swim()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_swim");
+			yearbookSwim = true;
+			CheckSolved();
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Who()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_who");
+			yearbookSwim = true;
+			CheckSolved();
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Relationship()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_relationship");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Pool()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_pool");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void NYCC()
+	{
+		if (state == State.YEARBOOK)
+		{
+			PlayAudio("championship_nycc");
+			yearbookNYCC = true;
+			CheckSolved();
+		}
+		else if (state == State.SOLVED_QUESTION || state == State.SOLVED_ANSWER)
+		{
+			PlayAudio("solved_nycc");
+			GameComplete();
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void CheckSolved()
+	{
+		if (yearbookMedal && yearbookNYCC && yearbookSwim)
+		{
+			StartCoroutine(Solve());
+        }
+	}
+
+	private IEnumerator Solve()
+	{
+		//wait for current audio to complete
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		PlayAudio("solved_question");
+		state = State.SOLVED_QUESTION;
+	}
+
+	private void GameComplete()
+	{
+		//TODO: any ending things
 	}
 }
