@@ -1,72 +1,122 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(AudioSource))]
 public class SpeechProcessor : MonoBehaviour {
 
 	enum State
 	{
-		DEFAULT,
-		QUESTION_SPECIFIC,
-		CLARIFY
+		PICK_UP,
+		SAY_YES,
+		CONFIRM_BOARD,
+		REMIND_NAME
 	}
 
 	private Dictionary<string, AudioClip> audioDictionary; 
-	private AudioSource audio;
+	private AudioSource audioSrc;
+	Dictionary<string, Action> responseMap;
+	State state;
 
-	void Awake(){
+	void Awake()
+	{
 		audioDictionary = new Dictionary<string, AudioClip> ();
-		audio = GetComponent<AudioSource>();
-		audio.enabled = true;
+		audioSrc = GetComponent<AudioSource>();
+		audioSrc.enabled = true;
 
-		AudioClip errorClip = Resources.Load ("didnt_catch_that", typeof(AudioClip)) as AudioClip;
-
+		AudioClip errorClip = Resources.Load("didnt_catch_that", typeof(AudioClip)) as AudioClip;
 		audioDictionary.Add("error", errorClip);
 
-		audioDictionary.Add("who", Resources.Load("alex_russell_info", typeof(AudioClip)) as AudioClip);
-		audioDictionary.Add("weapon", Resources.Load("killed_with_trophy_blunt_force_trauma", typeof(AudioClip)) as AudioClip);
-		audioDictionary.Add("picture", Resources.Load("lawrenceville_community_center_pool_locker_room", typeof(AudioClip)) as AudioClip);
-		audioDictionary.Add("bag",Resources.Load("nothing_in_the_bag", typeof(AudioClip)) as AudioClip);
-		audioDictionary.Add("northriver", Resources.Load("northriver_prep_is_a_high_school", typeof(AudioClip)) as AudioClip);
+		responseMap = new Dictionary<string, Action>();
+
+		LoadAudio("say_yes");
+		LoadAudio("alex_russell_info");
+		LoadAudio("killed_with_trophy_blunt_force_trauma");
+		LoadAudio("lawrenceville_community_center_pool_locker_room");
+		LoadAudio("nothing_in_the_bag");
+		LoadAudio("northriver_prep_is_a_high_school");
+
+		MapResponse("yes", Confirm);
+		MapResponse("yeah", Confirm);
+		
+		LoadAudio("who", "alex_russell_info");
+		LoadAudio("victim", "alex_russell_info");
+		LoadAudio("weapon", "killed_with_trophy_blunt_force_trauma");
+		LoadAudio("picture", "lawrenceville_community_center_pool_locker_room");
+		LoadAudio("bag", "nothing_in_the_bag");
+		LoadAudio("northriver", "northriver_prep_is_a_high_school");
+
+		state = State.PICK_UP;
+	}
+
+	private void LoadAudio(string clipName)
+	{
+		AudioClip audioClip = Resources.Load(clipName, typeof(AudioClip)) as AudioClip;
+		audioDictionary.Add(clipName, audioClip);
+	}
+
+	private void MapResponse(string word, Action response)
+	{
+		responseMap.Add(word, response);
+	}
+
+	private void MapResponseSimple(string word, string responseName)
+	{
+		responseMap.Add(word, () => PlayAudio(responseName));
+	}
+
+	private void PlayAudio(string clipName)
+	{
+		audioSrc.PlayOneShot(audioDictionary[clipName]);
 	}
 
 	public void Process(string text)
 	{
 		Debug.Log("Speech recognized: " + text);
-        /*
-		if (text.ToLower().Contains("ball"))
+		
+		//special case- accept anything
+		if (state == State.PICK_UP)
 		{
-			Debug.Log("You said ball");
+			PickUp();
+			return;
 		}
-        */
 
-		if(text.ToLower().Contains("who") || text.ToLower().Contains("victim"))
+		foreach (string word in responseMap.Keys)
 		{
-			audio.PlayOneShot(audioDictionary["who"]);
-			return;
+			if (text.ToLower().Contains(word))
+			{
+				responseMap[word]();
+				return;
+			}
 		}
-        if (text.ToLower().Contains("weapon"))
-        {
-			audio.PlayOneShot (audioDictionary["weapon"]);
-			return;
-        }
-        if (text.ToLower().Contains("picture"))
-        {
-			audio.PlayOneShot (audioDictionary["picture"]);
-			return;
-        }
-        if (text.ToLower().Contains("bag"))
+		if (state == State.REMIND_NAME)
 		{
-			audio.PlayOneShot (audioDictionary["bag"]);
-			return;
-		}
-        if (text.ToLower().Contains("northriver"))
-        {
-			audio.PlayOneShot(audioDictionary["northriver"]);
-			return;
+			PlayAudio("confirmboard_unrelated_1"); //TODO: switch between 1 and 2
         }
-			
-		audio.PlayOneShot (audioDictionary["error"]);
+		else
+		{
+			PlayAudio("error");
+		}
+	}
+
+	private void PickUp()
+	{
+		state = State.SAY_YES;
+		PlayAudio("pick_up");
+	}
+
+	private void Confirm()
+	{
+		if (state == State.SAY_YES)
+		{
+			state = State.CONFIRM_BOARD;
+			PlayAudio("say_yes");
+		}
+		else if (state == State.CONFIRM_BOARD)
+		{
+			state = State.REMIND_NAME;
+			PlayAudio("confirmboard");
+		}
     }
 }
