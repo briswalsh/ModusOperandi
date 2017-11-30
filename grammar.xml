@@ -8,6 +8,9 @@
 
   <rule id="clue">
     <one-of>
+      <item> yes </item>
+      <item> yeah </item>
+      
       <item> medal </item>
       <item> bag </item>
       <item> victim </item>
