@@ -89,12 +89,19 @@ public class SpeechProcessor : MonoBehaviour {
 		MapResponse("witness", Witness);
 		MapResponse("witnesses", Witness);
 
-		/*LoadAudio("who", "alex_russell_info");
-		LoadAudio("victim", "alex_russell_info");
-		LoadAudio("weapon", "killed_with_trophy_blunt_force_trauma");
-		LoadAudio("picture", "lawrenceville_community_center_pool_locker_room");
-		LoadAudio("bag", "nothing_in_the_bag");
-		LoadAudio("northriver", "northriver_prep_is_a_high_school");*/
+		MapResponse("locker", Locker);
+
+		MapResponse("sitting", Sit);
+
+		MapResponse("fingerprint", Fingerprint);
+		MapResponse("fingerprints", Fingerprint);
+
+		MapResponse("trophy", Trophy);
+
+		MapResponse("struggle", Struggle);
+		MapResponse("fight", Struggle);
+
+		MapResponse("blood", Blood);
 
 		state = State.PICK_UP;
 	}
@@ -277,7 +284,11 @@ public class SpeechProcessor : MonoBehaviour {
 				LCCmedal = true;
 				CheckLCCQuestions();
 			}
-            PlayAudio("LCC_medal");
+			PlayAudio("LCC_medal");
+		}
+		else if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_medal");
 		}
 		else
 		{
@@ -414,6 +425,78 @@ public class SpeechProcessor : MonoBehaviour {
 		if (state == State.ALL_QUESTIONS)
 		{
 			PlayAudio("general_witness");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Locker()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_locker");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Sit()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_sit");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Fingerprint()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_fingerprint");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Trophy()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_trophy");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Struggle()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_struggle");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Blood()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_blood");
 		}
 		else
 		{
