@@ -22,7 +22,10 @@ public class SpeechProcessor : MonoBehaviour {
 		REMIND_NAME,
 		READ_FILES,
 		GOT_IT,
-		CONFIRM_PHOTO
+		CONFIRM_LCC_PHOTO,
+		LCC_COD,
+		LCC_WEAPON,
+		LCC_QUESTIONS
 	}
 
 	private Dictionary<string, AudioClip> audioDictionary; 
@@ -48,6 +51,14 @@ public class SpeechProcessor : MonoBehaviour {
 		MapResponse("sam ellsworth", Sam);
 
 		MapResponse("where", Where);
+
+		MapResponse("strangled", Strangled);
+		MapResponse("strangulation", Strangled);
+		MapResponse("choked", Strangled);
+		MapResponse("choking", Strangled);
+
+		MapResponse("medal", Medal);
+		MapResponse("ribbon", Medal);
 
 		/*LoadAudio("who", "alex_russell_info");
 		LoadAudio("victim", "alex_russell_info");
@@ -137,8 +148,13 @@ public class SpeechProcessor : MonoBehaviour {
         }
 		else if (state == State.GOT_IT)
 		{
-			state = State.CONFIRM_PHOTO;
+			state = State.CONFIRM_LCC_PHOTO;
 			PlayAudio("gotit");
+		}
+		else if (state == State.CONFIRM_LCC_PHOTO)
+		{
+			state = State.LCC_COD;
+			PlayAudio("LCCphoto_confirm");
 		}
 		else
 		{
@@ -177,9 +193,39 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayAudio("readfile_whatfile");
 		}
+		else if (state == State.CONFIRM_LCC_PHOTO)
+		{
+			PlayAudio("LCCphoto_where");
+		}
 		else
 		{
-			//TODO
+			PlayAudio("error");
+		}
+	}
+
+	private void Strangled()
+	{
+		if (state == State.LCC_COD)
+		{
+			state = State.LCC_WEAPON;
+			PlayAudio("LCCphoto_causeofdeath");
+        }
+		else
+		{
+			PlayAudio("error");
+		}
+	}
+
+	private void Medal()
+	{
+		if (state == State.LCC_WEAPON)
+		{
+			state = State.LCC_QUESTIONS;
+			PlayAudio("LCCphoto_murderweapon");
+		}
+		else
+		{
+			PlayAudio("error");
 		}
 	}
 }
