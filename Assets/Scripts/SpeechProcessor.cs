@@ -12,7 +12,6 @@ public class SpeechProcessor : MonoBehaviour {
 	 * toggle between different versions of clips
 	 * found_jessenote
 	 * all TODOs
-	 * add keywords to grammar
 	 * general_school_murder_connection
 	 * alex-specific
 	 */
