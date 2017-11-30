@@ -12,6 +12,7 @@ public class SpeechProcessor : MonoBehaviour {
 	 * toggle between different versions of clips
 	 * found_jessenote
 	 * all TODOs
+	 * add keywords to grammar
 	 */
 
 	enum State
@@ -25,13 +26,23 @@ public class SpeechProcessor : MonoBehaviour {
 		CONFIRM_LCC_PHOTO,
 		LCC_COD,
 		LCC_WEAPON,
-		LCC_QUESTIONS
+		LCC_QUESTIONS,
+		ALL_QUESTIONS
 	}
 
 	private Dictionary<string, AudioClip> audioDictionary; 
 	private AudioSource audioSrc;
 	Dictionary<string, Action> responseMap;
 	State state;
+
+	private bool LCCmedal;
+	private bool LCCbag;
+	private bool LCCvictim;
+	private bool LCCwhere;
+	private bool LCCLCC;
+	private bool LCCwife;
+	private bool LCCwhy;
+	private int LCCquestions = 0;
 
 	void Awake()
 	{
@@ -59,6 +70,24 @@ public class SpeechProcessor : MonoBehaviour {
 
 		MapResponse("medal", Medal);
 		MapResponse("ribbon", Medal);
+
+		MapResponse("bag", Bag);
+
+		MapResponse("victim", Victim);
+
+		MapResponse("lawrenceville", LCC);
+		MapResponse("center", LCC);
+
+		MapResponse("wife", Wife);
+
+		MapResponse("why", Why);
+
+		MapResponse("death", CheckFile);
+		MapResponse("time", CheckFile);
+		MapResponse("weapon", CheckFile);
+
+		MapResponse("witness", Witness);
+		MapResponse("witnesses", Witness);
 
 		/*LoadAudio("who", "alex_russell_info");
 		LoadAudio("victim", "alex_russell_info");
@@ -109,6 +138,17 @@ public class SpeechProcessor : MonoBehaviour {
 				return;
 			}
 		}
+		PlayError();
+	}
+
+	private void PickUp()
+	{
+		state = State.SAY_YES;
+		PlayAudio("pick_up");
+	}
+
+	private void PlayError()
+	{
 		if (state == State.REMIND_NAME)
 		{
 			PlayAudio("confirmboard_unrelated_1"); //TODO: switch between 1 and 2
@@ -116,17 +156,11 @@ public class SpeechProcessor : MonoBehaviour {
 		else if (state == State.READ_FILES)
 		{
 			PlayAudio("readfile_no_confirm");
-        }
+		}
 		else
 		{
-			PlayAudio("error");
-		}
-	}
-
-	private void PickUp()
-	{
-		state = State.SAY_YES;
-		PlayAudio("pick_up");
+			PlayError();
+        }
 	}
 
 	private void Confirm()
@@ -158,7 +192,7 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else
 		{
-			PlayAudio("error");
+			PlayError();
 		}
     }
 
@@ -171,6 +205,7 @@ public class SpeechProcessor : MonoBehaviour {
 		else
 		{
 			//TODO
+			PlayError();
 		}
 	}
 
@@ -184,6 +219,7 @@ public class SpeechProcessor : MonoBehaviour {
 		else
 		{
 			//TODO
+			PlayError();
 		}
 	}
 
@@ -197,9 +233,19 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayAudio("LCCphoto_where");
 		}
+		else if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCwhere)
+			{
+				LCCquestions++;
+				LCCwhere = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_where");
+		}
 		else
 		{
-			PlayAudio("error");
+			PlayError();
 		}
 	}
 
@@ -212,7 +258,7 @@ public class SpeechProcessor : MonoBehaviour {
         }
 		else
 		{
-			PlayAudio("error");
+			PlayError();
 		}
 	}
 
@@ -223,9 +269,155 @@ public class SpeechProcessor : MonoBehaviour {
 			state = State.LCC_QUESTIONS;
 			PlayAudio("LCCphoto_murderweapon");
 		}
+		else if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCmedal)
+			{
+				LCCquestions++;
+				LCCmedal = true;
+				CheckLCCQuestions();
+			}
+            PlayAudio("LCC_medal");
+		}
 		else
 		{
-			PlayAudio("error");
+			PlayError();
+		}
+	}
+
+	private void Bag()
+	{
+		if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCbag)
+			{
+				LCCquestions++;
+				LCCbag = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_bag");
+		}
+		else if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_bag");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Victim()
+	{
+		if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCbag)
+			{
+				LCCquestions++;
+				LCCbag = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_victim");
+		}
+		else if (state == State.ALL_QUESTIONS)
+		{
+			//TODO: get name of victim then respond based on it?
+			PlayError();
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void LCC()
+	{
+		if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCLCC)
+			{
+				LCCquestions++;
+				LCCLCC = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_LCC");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Wife()
+	{
+		if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCwife)
+			{
+				LCCquestions++;
+				LCCwife = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_wife");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Why()
+	{
+		if (state == State.LCC_QUESTIONS)
+		{
+			if (!LCCwhy)
+			{
+				LCCquestions++;
+				LCCwhy = true;
+				CheckLCCQuestions();
+			}
+			PlayAudio("LCC_why");
+		}
+		else if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_why");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void CheckLCCQuestions()
+	{
+		if (LCCquestions >= 3)
+		{
+			state = State.ALL_QUESTIONS;
+			PlayAudio("LCC_done");
+		}
+	}
+
+	private void CheckFile()
+	{
+		if (state == State.LCC_QUESTIONS || state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("checkfile");
+		}
+		else
+		{
+			PlayError();
+		}
+	}
+
+	private void Witness()
+	{
+		if (state == State.ALL_QUESTIONS)
+		{
+			PlayAudio("general_witness");
+		}
+		else
+		{
+			PlayError();
 		}
 	}
 }
