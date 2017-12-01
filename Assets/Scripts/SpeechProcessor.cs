@@ -205,7 +205,7 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else
 		{
-			PlayError();
+			PlayAudio("error_1"); //TODO: switch between 1 through 6
 		}
 	}
 
