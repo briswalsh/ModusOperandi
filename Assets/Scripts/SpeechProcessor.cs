@@ -8,11 +8,10 @@ public class SpeechProcessor : MonoBehaviour {
 
 	/*
 	 * TODO:
-	 * play clips as time passes
-	 * found_jessenote
+	 * JesseFiles- wait until they find it?
 	 * all TODOs
-	 * general_school_murder_connection
 	 * alex-specific
+	 * advance with space???
 	 */
 
 	enum State
@@ -33,10 +32,11 @@ public class SpeechProcessor : MonoBehaviour {
 		SOLVED_ANSWER
 	}
 
+	private GameObject yearbookPhoto;
 	private Dictionary<string, AudioClip> audioDictionary; 
 	private AudioSource audioSrc;
-	Dictionary<string, Action> responseMap;
-	State state;
+	private Dictionary<string, Action> responseMap;
+	private State state;
 
 	private bool LCCmedal;
 	private bool LCCbag;
@@ -57,8 +57,7 @@ public class SpeechProcessor : MonoBehaviour {
 		audioSrc = GetComponent<AudioSource>();
 		audioSrc.enabled = true;
 
-		//AudioClip errorClip = Resources.Load("didnt_catch_that", typeof(AudioClip)) as AudioClip;
-		//audioDictionary.Add("error", errorClip);
+		yearbookPhoto = GameObject.Find("championship");
 
 		responseMap = new Dictionary<string, Action>();
 
@@ -132,14 +131,15 @@ public class SpeechProcessor : MonoBehaviour {
 		MapResponse("en why see see", NYCC);
 
 		state = State.PICK_UP;
+		StartCoroutine(PlayIntro());
 	}
 
 	void Update (){
-		UnityEngine.Debug.Log ("Update");
 		if (Input.GetKeyDown ("space")) {
+			//TODO: properly advance state
 			state = State.SAY_YES;
 			Confirm ();
-			UnityEngine.Debug.Log ("Y keypress");
+			Debug.Log ("Y keypress");
 		}
 	}
 
@@ -147,12 +147,7 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		responseMap.Add(word, response);
 	}
-
-	/*private void MapResponseSimple(string word, string responseName)
-	{
-		responseMap.Add(word, () => PlayAudio(responseName));
-	}*/
-
+	
 	private void PlayAudio(string clipName)
 	{
 		if (!audioDictionary.ContainsKey(clipName))
@@ -191,6 +186,19 @@ public class SpeechProcessor : MonoBehaviour {
 		System.Random rnd = new System.Random();
 		int n = rnd.Next(min, max + 1);
 		PlayAudio(prefix + "_" + n);
+	}
+
+	private IEnumerator PlayIntro()
+	{
+		while (state == State.PICK_UP)
+		{
+			PlayRandomAudio("starts", 1, 6);
+			while (audioSrc.isPlaying)
+			{
+				yield return new WaitForSeconds(0.1f);
+			}
+			yield return new WaitForSeconds(5);
+		}
 	}
 
 	private void PickUp()
@@ -241,6 +249,7 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			state = State.GOT_IT;
 			PlayAudio("read_file_confirm");
+			StartCoroutine(JesseFiles());
 		}
 		else if (state == State.GOT_IT)
 		{
@@ -262,6 +271,16 @@ public class SpeechProcessor : MonoBehaviour {
 			PlayError();
 		}
     }
+
+	private IEnumerator JesseFiles()
+	{
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		yield return new WaitForSeconds(1.0f); //TODO: wait until they find the file somehow?
+		PlayAudio("found_jessenote");
+	}
 
 	private void Alex()
 	{
@@ -598,13 +617,23 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			state = State.YEARBOOK;
 			PlayAudio("yearbook_highschool");
-			//TODO: unlock yearbook in scene
+			yearbookPhoto.SetActive(true);
+			StartCoroutine(RevealYearbook());
         }
 		else
 		{
 			PlayError();
 		}
 	}
+
+	private IEnumerator RevealYearbook()
+	{
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		PlayAudio("general_school_murder_connection");
+    }
 
 	private void Championship()
 	{
