@@ -135,6 +135,15 @@ public class SpeechProcessor : MonoBehaviour {
 		state = State.PICK_UP;
 	}
 
+	void Update (){
+		UnityEngine.Debug.Log ("Update");
+		if (Input.GetKeyDown ("space")) {
+			state = State.SAY_YES;
+			Confirm ();
+			UnityEngine.Debug.Log ("Y keypress");
+		}
+	}
+
 	private void MapResponse(string word, Action response)
 	{
 		responseMap.Add(word, response);
@@ -205,7 +214,10 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else
 		{
-			PlayAudio("error_1"); //TODO: switch between 1 through 6
+			System.Random rnd = new System.Random ();
+
+			int error_num = rnd.Next (1, 7);
+			PlayAudio ("error_" + error_num);
 		}
 	}
 
