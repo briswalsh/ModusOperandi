@@ -9,7 +9,6 @@ public class SpeechProcessor : MonoBehaviour {
 	/*
 	 * TODO:
 	 * play clips as time passes
-	 * toggle between different versions of clips
 	 * found_jessenote
 	 * all TODOs
 	 * general_school_murder_connection
@@ -186,6 +185,14 @@ public class SpeechProcessor : MonoBehaviour {
 		PlayError();
 	}
 
+	private void PlayRandomAudio(string prefix, int min, int max)
+	{
+		//min and max are both INCLUSIVE
+		System.Random rnd = new System.Random();
+		int n = rnd.Next(min, max + 1);
+		PlayAudio(prefix + "_" + n);
+	}
+
 	private void PickUp()
 	{
 		state = State.SAY_YES;
@@ -196,7 +203,7 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.REMIND_NAME)
 		{
-			PlayAudio("confirmboard_unrelated_1"); //TODO: switch between 1 and 2
+			PlayRandomAudio("confirmboard_unrelated", 1, 2);
 		}
 		else if (state == State.READ_FILES)
 		{
@@ -214,10 +221,7 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else
 		{
-			System.Random rnd = new System.Random ();
-
-			int error_num = rnd.Next (1, 7);
-			PlayAudio ("error_" + error_num);
+			PlayRandomAudio("error", 1, 6);
 		}
 	}
 
