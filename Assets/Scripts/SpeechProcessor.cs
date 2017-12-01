@@ -9,9 +9,8 @@ public class SpeechProcessor : MonoBehaviour {
 	/*
 	 * TODO:
 	 * JesseFiles- wait until they find it?
-	 * all TODOs
+	 * multi-part manual override
 	 * alex-specific
-	 * advance with space???
 	 */
 
 	enum State
@@ -134,15 +133,14 @@ public class SpeechProcessor : MonoBehaviour {
 		StartCoroutine(PlayIntro());
 	}
 
-	void Update (){
-		if (Input.GetKeyDown ("space")) {
-			//TODO: properly advance state
-			state = State.SAY_YES;
-			Confirm ();
-			Debug.Log ("Y keypress");
+	void Update()
+	{
+		if (Input.GetKeyDown ("space"))
+		{
+			Advance();
 		}
 	}
-
+	
 	private void MapResponse(string word, Action response)
 	{
 		responseMap.Add(word, response);
@@ -186,6 +184,55 @@ public class SpeechProcessor : MonoBehaviour {
 		System.Random rnd = new System.Random();
 		int n = rnd.Next(min, max + 1);
 		PlayAudio(prefix + "_" + n);
+	}
+
+	private void Advance()
+	{
+		switch (state)
+		{
+			case State.PICK_UP:
+				PickUp();
+                break;
+			case State.SAY_YES:
+				Confirm();
+				break;
+			case State.CONFIRM_BOARD:
+				Confirm();
+				break;
+			case State.REMIND_NAME:
+				Sam();
+                break;
+			case State.READ_FILES:
+				Confirm();
+				break;
+			case State.GOT_IT:
+				Confirm();
+				break;
+			case State.CONFIRM_LCC_PHOTO:
+				Confirm();
+				break;
+			case State.LCC_COD:
+				Strangled();
+                break;
+			case State.LCC_WEAPON:
+				Medal();
+                break;
+			case State.LCC_QUESTIONS:
+				//TODO: how should this one be done? it requires 3 parts
+				break;
+			case State.ALL_QUESTIONS:
+				Highschool();
+                break;
+			case State.YEARBOOK:
+				//TODO: this one also requires multiple parts
+				break;
+			case State.SOLVED_QUESTION:
+				Confirm();
+				break;
+			case State.SOLVED_ANSWER:
+				NYCC();
+                break;
+		}
 	}
 
 	private IEnumerator PlayIntro()
