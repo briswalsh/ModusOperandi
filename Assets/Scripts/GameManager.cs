@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 	string[] empty = { };
 	Process speechProcess;
 
+	public SteamVR_TrackedObject Controller;
+
 	void Start()
 	{
 		speechProcess = Process.Start(SPEECH_EXE_PATH);
@@ -50,6 +52,17 @@ public class GameManager : MonoBehaviour
 
 	void Update()
 	{
+		var ipt = SteamVR_Controller.Input((int)Controller.index);
+		if (ipt.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+		{
+			Unmute();
+		}
+	
+		if(ipt.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+		{
+			Mute();
+		}
+
 	}
 
 	void OnApplicationQuit()
