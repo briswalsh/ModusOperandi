@@ -8,7 +8,10 @@ Instructions:
 
 Controls:
     Hold the trigger and use your voice to talk
-    [DEBUG] Press space to advance if it doesn't pick up the command
+    [DEBUG] SPACE- advance (if it doesn't pick up the command)
+    [DEBUG] L- skip to end of LCC questions
+    [DEBUG] Y- skip to yearbook photo
+    [DEBUG] S- skip to final question
 
 Credits:
     Microphone muting: based on http://www.computercabal.com/2010/11/mute-microphone-from-c-on-windows.html

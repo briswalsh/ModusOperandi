@@ -135,12 +135,29 @@ public class SpeechProcessor : MonoBehaviour {
 
 	void Update()
 	{
-		if (Input.GetKeyDown ("space"))
+		if (Input.GetKeyDown("space"))
 		{
 			Advance();
 		}
+		if (Input.GetKeyDown("Y"))
+		{
+			//skip to yearbook reveal
+			Highschool();
+		}
+		if (Input.GetKeyDown("L"))
+		{
+			//skip to LCC_Done
+			LCCquestions = 3;
+			CheckLCCQuestions();
+        }
+
+		if (Input.GetKeyDown("S"))
+		{
+			//skip to solved question
+			Solve();
+        }
 	}
-	
+
 	private void MapResponse(string word, Action response)
 	{
 		responseMap.Add(word, response);
