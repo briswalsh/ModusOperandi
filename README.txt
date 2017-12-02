@@ -12,6 +12,7 @@ Controls:
     [DEBUG] L- skip to end of LCC questions
     [DEBUG] Y- skip to yearbook photo
     [DEBUG] S- skip to final question
+    [DEBUG] T- hold to talk
 
 Credits:
     Microphone muting: based on http://www.computercabal.com/2010/11/mute-microphone-from-c-on-windows.html

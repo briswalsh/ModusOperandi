@@ -171,6 +171,7 @@ public class SpeechProcessor : MonoBehaviour {
 			AudioClip audioClip = Resources.Load(clipName, typeof(AudioClip)) as AudioClip;
 			audioDictionary.Add(clipName, audioClip);
 		}
+		audioSrc.Stop();
 		audioSrc.PlayOneShot(audioDictionary[clipName]);
 	}
 
