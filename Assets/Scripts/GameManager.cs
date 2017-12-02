@@ -53,16 +53,15 @@ public class GameManager : MonoBehaviour
 	void Update()
 	{
 		var ipt = SteamVR_Controller.Input((int)Controller.index);
-		if (ipt.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+		if (ipt.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) || Input.GetKeyDown(KeyCode.T))
 		{
 			Unmute();
 		}
 	
-		if(ipt.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+		if (ipt.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) || Input.GetKeyUp(KeyCode.T))
 		{
 			Mute();
 		}
-
 	}
 
 	void OnApplicationQuit()
