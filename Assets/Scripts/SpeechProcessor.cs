@@ -8,8 +8,9 @@ public class SpeechProcessor : MonoBehaviour {
 
 	/*
 	 * TODO:
-	 * multi-part manual override
+	 * get back to all_questions from yearbook?
 	 * alex-specific
+	 * wipe speech.txt at start
 	 */
 
 	enum State
@@ -127,7 +128,7 @@ public class SpeechProcessor : MonoBehaviour {
 
 		MapResponse("pool", Pool);
 
-		MapResponse("en why see see", NYCC);
+		MapResponse("en wy see see", NYCC);
 
 		state = State.SAY_YES;
 		StartCoroutine(PlayIntro());
@@ -135,7 +136,6 @@ public class SpeechProcessor : MonoBehaviour {
 
 	void Update()
 	{
-		print(audioDictionary);
         if (Input.GetKeyDown(KeyCode.Space))
 		{
 			Advance();
@@ -157,8 +157,6 @@ public class SpeechProcessor : MonoBehaviour {
 			//skip to solved question
 			Solve();
         }
-
-		print(state);
 	}
 
 	private void MapResponse(string word, Action response)
@@ -307,6 +305,7 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else if (state == State.READ_FILES)
 		{
+			state = State.GOT_IT;
 			PlayAudio("readfile_confirm");
 			StartCoroutine(JesseNote());
 		}
@@ -348,7 +347,6 @@ public class SpeechProcessor : MonoBehaviour {
 			yield return new WaitForSeconds(0.1f);
 		}
 		yield return new WaitForSeconds(1.0f);
-		state = State.GOT_IT;
 		PlayAudio("found_jessenote");
 	}
 
