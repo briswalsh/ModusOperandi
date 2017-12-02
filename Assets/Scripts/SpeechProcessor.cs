@@ -30,7 +30,7 @@ public class SpeechProcessor : MonoBehaviour {
 		SOLVED_ANSWER
 	}
 
-	private GameObject yearbookPhoto;
+	public GameObject yearbookPhoto;
 	private Dictionary<string, AudioClip> audioDictionary; 
 	private AudioSource audioSrc;
 	private Dictionary<string, Action> responseMap;
@@ -55,9 +55,7 @@ public class SpeechProcessor : MonoBehaviour {
 		audioDictionary = new Dictionary<string, AudioClip>();
 		audioSrc = GetComponent<AudioSource>();
 		audioSrc.enabled = true;
-
-		yearbookPhoto = GameObject.Find("championship");
-
+		
 		responseMap = new Dictionary<string, Action>();
 		multilinePositions = new Dictionary<string, int>();
 
