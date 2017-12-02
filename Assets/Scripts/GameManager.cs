@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
 	void Start()
 	{
+		File.WriteAllLines(SPEECH_PATH, empty);
 		speechProcess = Process.Start(SPEECH_EXE_PATH);
 		StartCoroutine("Listen");
 		Mute();
