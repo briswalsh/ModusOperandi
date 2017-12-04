@@ -8,17 +8,13 @@ public class SpeechProcessor : MonoBehaviour {
 
 	/*
 	 * TODO:
-	 * play clips as time passes
-	 * toggle between different versions of clips
-	 * found_jessenote
-	 * all TODOs
-	 * general_school_murder_connection
+	 * get back to all_questions from yearbook?
 	 * alex-specific
+	 * wipe speech.txt at start
 	 */
 
 	enum State
 	{
-		PICK_UP,
 		SAY_YES,
 		CONFIRM_BOARD,
 		REMIND_NAME,
@@ -34,10 +30,12 @@ public class SpeechProcessor : MonoBehaviour {
 		SOLVED_ANSWER
 	}
 
+	public GameObject yearbookPhoto;
 	private Dictionary<string, AudioClip> audioDictionary; 
 	private AudioSource audioSrc;
-	Dictionary<string, Action> responseMap;
-	State state;
+	private Dictionary<string, Action> responseMap;
+	private State state;
+	private Dictionary<string, int> multilinePositions;
 
 	private bool LCCmedal;
 	private bool LCCbag;
@@ -54,14 +52,12 @@ public class SpeechProcessor : MonoBehaviour {
 
 	void Awake()
 	{
-		audioDictionary = new Dictionary<string, AudioClip> ();
+		audioDictionary = new Dictionary<string, AudioClip>();
 		audioSrc = GetComponent<AudioSource>();
 		audioSrc.enabled = true;
 
-		//AudioClip errorClip = Resources.Load("didnt_catch_that", typeof(AudioClip)) as AudioClip;
-		//audioDictionary.Add("error", errorClip);
-
 		responseMap = new Dictionary<string, Action>();
+		multilinePositions = new Dictionary<string, int>();
 
 		MapResponse("yes", Confirm);
 		MapResponse("yeah", Confirm);
@@ -130,21 +126,43 @@ public class SpeechProcessor : MonoBehaviour {
 
 		MapResponse("pool", Pool);
 
-		MapResponse("en why see see", NYCC);
+		MapResponse("en wy see see", NYCC);
 
-		state = State.PICK_UP;
+		state = State.SAY_YES;
+		StartCoroutine(PlayIntro());
+	}
+
+	void Update()
+	{
+        print(state);
+        if (Input.GetKeyDown(KeyCode.Space))
+		{
+			Advance();
+		}
+		if (Input.GetKeyDown(KeyCode.Y))
+		{
+			//skip to yearbook reveal
+			Highschool();
+		}
+		if (Input.GetKeyDown(KeyCode.L))
+		{
+			//skip to LCC_Done
+			LCCquestions = 3;
+			CheckLCCQuestions();
+        }
+
+		if (Input.GetKeyDown(KeyCode.S))
+		{
+			//skip to solved question
+			StartCoroutine(Solve());
+        }
 	}
 
 	private void MapResponse(string word, Action response)
 	{
 		responseMap.Add(word, response);
 	}
-
-	/*private void MapResponseSimple(string word, string responseName)
-	{
-		responseMap.Add(word, () => PlayAudio(responseName));
-	}*/
-
+	
 	private void PlayAudio(string clipName)
 	{
 		if (!audioDictionary.ContainsKey(clipName))
@@ -152,6 +170,7 @@ public class SpeechProcessor : MonoBehaviour {
 			AudioClip audioClip = Resources.Load(clipName, typeof(AudioClip)) as AudioClip;
 			audioDictionary.Add(clipName, audioClip);
 		}
+		audioSrc.Stop();
 		audioSrc.PlayOneShot(audioDictionary[clipName]);
 	}
 
@@ -159,13 +178,6 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		Debug.Log("Speech recognized: " + text);
 		
-		//special case- accept anything
-		if (state == State.PICK_UP)
-		{
-			PickUp();
-			return;
-		}
-
 		foreach (string word in responseMap.Keys)
 		{
 			if (text.ToLower().Contains(word))
@@ -177,17 +189,87 @@ public class SpeechProcessor : MonoBehaviour {
 		PlayError();
 	}
 
-	private void PickUp()
+	private void PlayMultilineAudio(string prefix, int min, int max)
 	{
-		state = State.SAY_YES;
-		PlayAudio("pick_up");
+		//min and max are both INCLUSIVE
+		int n = min;
+		if (multilinePositions.ContainsKey(prefix))
+		{
+			n = multilinePositions[prefix];
+		}
+		PlayAudio(prefix + "_" + n);
+		n++;
+		if (n > max)
+		{
+			n = min;
+		}
+		multilinePositions[prefix] = n;
 	}
 
+	private void Advance()
+	{
+		switch (state)
+		{
+			case State.SAY_YES:
+				Confirm();
+				break;
+			case State.CONFIRM_BOARD:
+				Confirm();
+				break;
+			case State.REMIND_NAME:
+				Sam();
+                break;
+			case State.READ_FILES:
+				Confirm();
+				break;
+			case State.GOT_IT:
+				Confirm();
+				break;
+			case State.CONFIRM_LCC_PHOTO:
+				Confirm();
+				break;
+			case State.LCC_COD:
+				Strangled();
+                break;
+			case State.LCC_WEAPON:
+				Medal();
+                break;
+			case State.LCC_QUESTIONS:
+				//TODO: how should this one be done? it requires 3 parts
+				break;
+			case State.ALL_QUESTIONS:
+				Highschool();
+                break;
+			case State.YEARBOOK:
+				//TODO: this one also requires multiple parts
+				break;
+			case State.SOLVED_QUESTION:
+				Confirm();
+				break;
+			case State.SOLVED_ANSWER:
+				NYCC();
+                break;
+		}
+	}
+
+	private IEnumerator PlayIntro()
+	{
+		while (state == State.SAY_YES)
+		{
+			PlayAudio("pick_up");
+			while (audioSrc.isPlaying)
+			{
+				yield return new WaitForSeconds(0.1f);
+			}
+			yield return new WaitForSeconds(5);
+		}
+	}
+	
 	private void PlayError()
 	{
 		if (state == State.REMIND_NAME)
 		{
-			PlayAudio("confirmboard_unrelated_1"); //TODO: switch between 1 and 2
+			PlayMultilineAudio("confirmboard_unrelated", 1, 2);
 		}
 		else if (state == State.READ_FILES)
 		{
@@ -205,7 +287,7 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else
 		{
-			PlayError();
+			PlayMultilineAudio("error", 1, 6);
 		}
 	}
 
@@ -224,7 +306,8 @@ public class SpeechProcessor : MonoBehaviour {
 		else if (state == State.READ_FILES)
 		{
 			state = State.GOT_IT;
-			PlayAudio("read_file_confirm");
+			PlayAudio("readfile_confirm");
+			StartCoroutine(JesseNote());
 		}
 		else if (state == State.GOT_IT)
 		{
@@ -247,6 +330,26 @@ public class SpeechProcessor : MonoBehaviour {
 		}
     }
 
+	private IEnumerator ReadFiles()
+	{
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		yield return new WaitForSeconds(5.0f);
+		PlayAudio("readfile_time_pass");
+	}
+
+	private IEnumerator JesseNote()
+	{
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		yield return new WaitForSeconds(1.0f);
+		PlayAudio("found_jessenote");
+	}
+
 	private void Alex()
 	{
 		if (state == State.REMIND_NAME)
@@ -266,6 +369,7 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			PlayAudio("confirmboard_sam");
 			state = State.READ_FILES;
+			StartCoroutine(ReadFiles());
 		}
 		else
 		{
@@ -286,13 +390,13 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_where");
 			if (!LCCwhere)
 			{
 				LCCquestions++;
 				LCCwhere = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_where");
 		}
 		else if (state == State.YEARBOOK)
 		{
@@ -326,13 +430,13 @@ public class SpeechProcessor : MonoBehaviour {
 		}
 		else if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_medal");
 			if (!LCCmedal)
 			{
 				LCCquestions++;
 				LCCmedal = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_medal");
 		}
 		else if (state == State.ALL_QUESTIONS)
 		{
@@ -354,13 +458,13 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_bag");
 			if (!LCCbag)
 			{
 				LCCquestions++;
 				LCCbag = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_bag");
 		}
 		else if (state == State.ALL_QUESTIONS)
 		{
@@ -376,13 +480,13 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.LCC_QUESTIONS)
 		{
-			if (!LCCbag)
+			PlayAudio("LCC_victim");
+			if (!LCCvictim)
 			{
 				LCCquestions++;
-				LCCbag = true;
+				LCCvictim = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_victim");
 		}
 		else if (state == State.ALL_QUESTIONS)
 		{
@@ -399,13 +503,13 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_LCC");
 			if (!LCCLCC)
 			{
 				LCCquestions++;
 				LCCLCC = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_LCC");
 		}
 		else
 		{
@@ -417,13 +521,13 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_wife");
 			if (!LCCwife)
 			{
 				LCCquestions++;
 				LCCwife = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_wife");
 		}
 		else
 		{
@@ -435,13 +539,13 @@ public class SpeechProcessor : MonoBehaviour {
 	{
 		if (state == State.LCC_QUESTIONS)
 		{
+			PlayAudio("LCC_why");
 			if (!LCCwhy)
 			{
 				LCCquestions++;
 				LCCwhy = true;
 				CheckLCCQuestions();
 			}
-			PlayAudio("LCC_why");
 		}
 		else if (state == State.ALL_QUESTIONS)
 		{
@@ -455,9 +559,19 @@ public class SpeechProcessor : MonoBehaviour {
 
 	private void CheckLCCQuestions()
 	{
+		StartCoroutine(CheckLCCDelayed());
+	}
+
+	private IEnumerator CheckLCCDelayed()
+	{
 		if (LCCquestions >= 3)
 		{
+			while (audioSrc.isPlaying)
+			{
+				yield return new WaitForSeconds(0.1f);
+			}
 			state = State.ALL_QUESTIONS;
+			yield return new WaitForSeconds(1);
 			PlayAudio("LCC_done");
 		}
 	}
@@ -582,13 +696,24 @@ public class SpeechProcessor : MonoBehaviour {
 		{
 			state = State.YEARBOOK;
 			PlayAudio("yearbook_highschool");
-			//TODO: unlock yearbook in scene
+			yearbookPhoto.SetActive(true);
+			StartCoroutine(RevealYearbook());
         }
 		else
 		{
 			PlayError();
 		}
 	}
+
+	private IEnumerator RevealYearbook()
+	{
+		while (audioSrc.isPlaying)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		yield return new WaitForSeconds(1);
+		PlayAudio("general_school_murder_connection");
+    }
 
 	private void Championship()
 	{

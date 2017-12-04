@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
 	void Start()
 	{
+		File.WriteAllLines(SPEECH_PATH, empty);
 		speechProcess = Process.Start(SPEECH_EXE_PATH);
 		StartCoroutine("Listen");
 		Mute();
@@ -53,16 +54,17 @@ public class GameManager : MonoBehaviour
 	void Update()
 	{
 		var ipt = SteamVR_Controller.Input((int)Controller.index);
-		if (ipt.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+		if (ipt.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) || Input.GetKeyDown(KeyCode.T))
 		{
+			UnityEngine.Debug.Log ("unmute");
 			Unmute();
 		}
 	
-		if(ipt.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+		if (ipt.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) || Input.GetKeyUp(KeyCode.T))
 		{
+			UnityEngine.Debug.Log ("mute");
 			Mute();
 		}
-
 	}
 
 	void OnApplicationQuit()
